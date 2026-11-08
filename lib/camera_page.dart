@@ -95,8 +95,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       final back = cameras.where((c) => c.lensDirection == CameraLensDirection.back);
       if (back.isEmpty) throw CameraException('noBackCamera', 'ไม่พบกล้องหลัง');
       _backCamera = back.first;
-      final controller = await _startController(_backCamera!, ResolutionPreset.max)
-          // Some phones cannot stream frames while also capturing at full sensor size.
+      // The booth crops every shot to 16:9, so ask for 16:9 here instead of
+      // sending a 4:3 sensor-size photo the booth would have to re-encode.
+      final controller = await _startController(_backCamera!, ResolutionPreset.ultraHigh)
           .catchError((Object _) => _startController(_backCamera!, ResolutionPreset.veryHigh));
       if (!mounted) {
         await controller.dispose();
